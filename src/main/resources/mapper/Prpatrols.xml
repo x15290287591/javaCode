@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.PrpatrolsMapper">
+    <insert id="insert">
+        insert into project_patrols
+        values
+        <foreach collection="projectIds" item="projectIds" separator=",">
+            (null,#{patrolsId},#{projectIds})
+        </foreach>
+    </insert>
+    <delete id="deleteById">
+        delete
+        from project_patrols
+        where patrols_id = #{id}
+    </delete>
+</mapper>

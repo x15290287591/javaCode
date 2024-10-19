@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.UserMapper">
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_user
+        values (null, #{numbering}, #{name}, #{sex}, #{certificatesType},
+                #{documents}, #{relationship}, #{phone}, #{cardFront},
+                #{cardBack}, #{status}, #{type}, #{number}, #{roomNum},
+                #{remark}, #{floorId}, #{houseId}, #{communityId},
+                #{startTime}, #{endTime})
+    </insert>
+    <delete id="deleteById">
+        delete
+        from sys_user
+        where id = #{id}
+    </delete>
+    <delete id="deleteBatch">
+        delete from sys_user where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update">
+        update sys_user
+        <set>
+            <if test="numbering != null">numbering=#{numbering},</if>
+            <if test="name != null">name=#{name},</if>
+            <if test="sex != null">sex=#{sex},</if>
+            <if test="certificatesType != null">certificates_type=#{certificatesType},</if>
+            <if test="documents != null">documents=#{documents},</if>
+            <if test="relationship != null">relationship=#{relationship},</if>
+            <if test="phone != null">phone=#{phone},</if>
+            <if test="cardFront != null">card_front=#{cardFront},</if>
+            <if test="cardBack != null">card_back=#{cardBack},</if>
+            <if test="status != null">status=#{status},</if>
+            <if test="type != null">type=#{type},</if>
+            <if test="number != null">number=#{number},</if>
+            <if test="roomNum != null">room_num=#{roomNum},</if>
+            <if test="remark != null">remark=#{remark},</if>
+            <if test="startTime != null">start_time=#{startTime},</if>
+            <if test="endTime != null">end_time=#{endTime},</if>
+        </set>
+        where id=#{id}
+    </update>
+    <resultMap id="user" type="User">
+        <id property="id" column="id"/>
+        <result property="numbering" column="numbering"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="certificatesType" column="certificates_type"/>
+        <result property="documents" column="documents"/>
+        <result property="relationship" column="relationship"/>
+        <result property="phone" column="phone"/>
+        <result property="cardFront" column="card_front"/>
+        <result property="cardBack" column="card_back"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="number" column="number"/>
+        <result property="roomNum" column="room_num"/>
+        <result property="remark" column="remark"/>
+        <result property="floorId" column="floor_id"/>
+        <result property="houseId" column="house_id"/>
+        <result property="communityId" column="community_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+    </resultMap>
+    <select id="selectBySearch" resultMap="user">
+        select * from sys_user
+        <where>
+            <if test="type!=null and type!=''">
+                and type like concat('%',#{type},'%')
+            </if>
+            <if test="status!=null and status!=''">
+                and status like concat('%',#{status},'%')
+            </if>
+            <if test="startTime !=null and startTime!=''">
+                and start_time &lt;= #{startTime}
+            </if>
+            <if test="endTime !=null and endTime!=''">
+                and end_time &gt;= #{endTime}
+            </if>
+            <if test="name!=null and name!=''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="phone!=null">
+                and phone like concat('%',#{phone},'%')
+            </if>
+            <if test="documents!=null and documents!=''">
+                and documents like concat('%',#{documents},'%')
+            </if>
+            <if test="day!=null">
+                and start_time &gt;= DATE_SUB(CURDATE(), INTERVAL #{day} DAY)
+            </if>
+        </where>
+    </select>
+    <select id="selectByRoomNum" resultMap="user">
+        select *
+        from sys_user
+        where room_num like concat('%', #{roomNum}, '%')
+    </select>
+    <resultMap id="user2" type="User">
+        <id property="id" column="id"/>
+        <result property="numbering" column="numbering"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="certificatesType" column="certificates_type"/>
+        <result property="documents" column="documents"/>
+        <result property="relationship" column="relationship"/>
+        <result property="phone" column="phone"/>
+        <result property="cardFront" column="card_front"/>
+        <result property="cardBack" column="card_back"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="number" column="number"/>
+        <result property="roomNum" column="room_num"/>
+        <result property="remark" column="remark"/>
+        <result property="floorId" column="floor_id"/>
+        <result property="houseId" column="house_id"/>
+        <result property="communityId" column="community_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <collection property="tags" ofType="Tag">
+            <id property="id" column="tid"/>
+            <result property="name" column="tname"/>
+            <result property="status" column="tstatus"/>
+            <collection property="check" select="selectByCheck"
+                        column="{userId=id,tagId=tid}"/>
+            </collection>
+    </resultMap>
+    <select id="selectById" resultMap="user2">
+        select u.*,
+               t.id tid,
+               t.name tname
+        from sys_user u
+        left join sys_tag t on 1=1
+        where u.id = #{id}
+    </select>
+    <select id="selectByCheck" resultType="boolean">
+        select count(id) from user_tag where user_id=#{userId} and tag_id=#{tagId}
+    </select>
+</mapper>

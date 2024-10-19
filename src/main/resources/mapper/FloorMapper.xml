@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.FloorMapper">
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_floor
+        values (null, #{name}, #{completionTime},
+                #{houseUse}, #{area}, #{unitNum},
+                #{floorNum}, #{lift}, #{storage},
+                #{remark}, #{communityId})
+    </insert>
+    <resultMap id="floor" type="Floor">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="completion_time" property="completionTime"/>
+        <result column="house_use" property="houseUse"/>
+        <result column="area" property="area"/>
+        <result column="unit_num" property="unitNum"/>
+        <result column="floor_num" property="floorNum"/>
+        <result column="lift" property="lift"/>
+        <result column="storage" property="storage"/>
+        <result column="remark" property="remark"/>
+        <result column="community_id" property="communityId"/>
+    </resultMap>
+    <select id="selectAll" resultMap="floor">
+        select *
+        from sys_floor
+    </select>
+
+    <update id="update">
+        update sys_floor
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="completionTime!=null">
+                completion_time=#{completionTime},
+            </if>
+            <if test="houseUse!=null">
+                house_use=#{houseUse},
+            </if>
+            <if test="area!=null">
+                area=#{area},
+            </if>
+            <if test="unitNum!=null">
+                unit_num=#{unitNum},
+            </if>
+            <if test="floorNum!=null">
+                floor_num=#{floorNum},
+            </if>
+            <if test="lift!=null">
+                lift=#{lift},
+            </if>
+            <if test="storage!=null">
+                storage=#{storage},
+            </if>
+            <if test="remark!=null">
+                remark=#{remark},
+            </if>
+            <if test="communityId!=null">
+                community_id=#{communityId}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from sys_floor
+        where id = #{id}
+    </delete>
+    <select id="selectByUse" resultMap="floor">
+        select *
+        from sys_floor
+        where house_use like concat('%', #{houseUse}, '%')
+    </select>
+
+    <select id="selectByName" resultMap="floor">
+        select *
+        from sys_floor
+        where name like concat('%', #{name}, '%')
+    </select>
+
+    <delete id="deleteBatch">
+        delete from sys_floor where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByPage" resultMap="floor">
+        select *
+        from sys_floor f
+        where f.community_id = #{communityId}
+    </select>
+</mapper>

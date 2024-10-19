@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.RepairMapper">
+    <resultMap id="repair" type="Repair">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="serial" column="serial"/>
+        <result property="model" column="model"/>
+        <result property="location" column="location"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="description" column="description"/>
+        <result property="result" column="result"/>
+        <result property="remark" column="remark"/>
+        <result property="classifyId" column="classify_id"/>
+        <collection property="classifyList" ofType="Classify">
+            <id property="id" column="cid"/>
+            <result property="name" column="classify_name"/>
+        </collection>
+        <collection property="deviceList" ofType="Device">
+            <id property="id" column="did"/>
+            <result property="name" column="device_name"/>
+        </collection>
+    </resultMap>
+    <select id="selectAll" resultMap="repair">
+        select r.*,
+               c.id   as cid,
+               c.name as classify_name,
+               d.id   as did,
+               d.name as device_name,
+               com.id  as community_id
+        from sys_repair r
+                 left join sys_classify c on r.classify_id = c.id
+                 left join sys_device d on r.device_id = d.id
+                 left join sys_community com on com.id = r.community_id
+    </select>
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_repair
+        values (null,#{name},#{serial},#{model},#{location},
+                #{employeeId},#{description},#{result},#{remark},
+                #{classifyId},#{communityId},#{deviceId})
+    </insert>
+    <delete id="deleteBatch">
+        delete from sys_repair where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteById">
+        delete
+        from sys_repair
+        where id = #{id}
+    </delete>
+    <update id="update">
+        update sys_repair
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="serial!=null and serial!=''">
+                serial=#{serial},
+            </if>
+            <if test="model!=null and model!=''">
+                model=#{model},
+            </if>
+            <if test="location!=null and location!=''">
+                location=#{location},
+            </if>
+            <if test="description!=null and description!=''">
+                description=#{description},
+            </if>
+            <if test="result!=null and result!=''">
+                result=#{result},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectByName" resultMap="repair">
+        select r.*,
+               c.id   as cid,
+               c.name as classify_name,
+               d.id   as did,
+               d.name as device_name,
+               com.id  as community_id
+        from sys_repair r
+                 left join sys_classify c on r.classify_id = c.id
+                 left join sys_device d on r.device_id = d.id
+                 left join sys_community com on com.id = r.community_id
+        <where>
+            <if test="name!=null and name!=''">
+                and r.name like concat('%',#{name},'%')
+            </if>
+            <if test="serial!=null and serial!=''">
+                and r.serial like concat('%',#{serial},'%')
+            </if>
+            <if test="model!=null and model!=''">
+                and r.model like concat('%',#{model},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

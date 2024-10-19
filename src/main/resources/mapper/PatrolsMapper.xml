@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.PatrolsMapper">
+    <resultMap id="patrols" type="Patrols">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="way" column="way"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="status" column="status"/>
+        <result property="communityId" column="community_id"/>
+        <collection property="projectList" ofType="Project">
+            <id property="id" column="id"/>
+            <result property="name" column="project_name"/>
+        </collection>
+    </resultMap>
+    <select id="selectAll" resultMap="patrols">
+        select *
+        from sys_patrols
+    </select>
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_patrols
+        values (null, #{name}, #{way}, #{longitude}, #{latitude}, #{status},
+                #{communityId})
+    </insert>
+    <delete id="deleteById">
+        delete
+        from sys_patrols
+        where id = #{id}
+    </delete>
+    <delete id="deleteBatch">
+        delete from sys_patrols where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update">
+        update sys_patrols
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="way!=null and way!=''">
+                way=#{way},
+            </if>
+            <if test="longitude!=null and longitude!=''">
+                longitude=#{longitude},
+            </if>
+            <if test="latitude!=null and latitude!=''">
+                latitude=#{latitude},
+            </if>
+            <if test="status!=null and status!=''">
+                status=#{status},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="selectByName" resultMap="patrols">
+        select p.*,
+               s.id,s.name as project_name
+        from sys_patrols p
+        left join project_patrols pp on pp.patrols_id = p.id
+        left join sys_project s on pp.project_id = s.id
+        where p.name like concat('%', #{name}, '%')
+    </select>
+</mapper>

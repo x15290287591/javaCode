@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.LeaseMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_lease
+        values (null, #{name}, #{money}, #{leaseWay}, #{houseStatus},
+                #{status}, #{direction}, #{area}, #{floor},
+                #{checkTime},  #{houseImg},
+                #{rentMsg}, #{phone}, #{wei}, #{effective},
+                #{startTime}, #{houseMsg}, #{houseId}, #{communityId},
+                #{floorId})
+    </insert>
+    <delete id="deleteById">
+        delete
+        from sys_lease
+        where id = #{id}
+    </delete>
+    <delete id="deleteBatch">
+        delete from sys_lease where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update">
+        update sys_lease
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="money!=null">
+                money=#{money},
+            </if>
+            <if test="leaseWay!=null and leaseWay!=''">
+                lease_way=#{leaseWay},
+            </if>
+            <if test="houseStatus!=null and houseStatus!=''">
+                house_status=#{houseStatus},
+            </if>
+            <if test="status!=null and status!=''">
+                status=#{status},
+            </if>
+            <if test="direction!=null and direction!=''">
+                direction=#{direction},
+            </if>
+            <if test="area!=null">
+                area=#{area},
+            </if>
+            <if test="floor!=null and floor!=''">
+                floor=#{floor},
+            </if>
+            <if test="checkTime!=null">
+                check_time=#{checkTime},
+            </if>
+            <if test="houseImg!=null and houseImg!=''">
+                house_img=#{houseImg},
+            </if>
+            <if test="rentMsg!=null and rentMsg!=''">
+                rent_msg=#{rentMsg},
+            </if>
+            <if test="phone!=null">
+                phone=#{phone},
+            </if>
+            <if test="wei!=null and wei!=''">
+                wei=#{wei},
+            </if>
+            <if test="effective!=null and effective!=''">
+                effective=#{effective},
+            </if>
+            <if test="startTime!=null">
+                start_time=#{startTime},
+            </if>
+            <if test="houseMsg!=null and houseMsg!=''">
+                house_msg=#{houseMsg},
+            </if>
+
+        </set>
+        where id=#{id}
+    </update>
+    <resultMap id="lease2" type="Lease">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="money" column="money"/>
+        <result property="leaseWay" column="lease_way"/>
+        <result property="houseStatus" column="house_status"/>
+        <result property="direction" column="direction"/>
+        <result property="area" column="area"/>
+        <result property="floor" column="floor"/>
+        <result property="checkTime" column="check_time"/>
+        <result property="houseImg" column="house_img"/>
+        <result property="rentMsg" column="rent_msg"/>
+        <result property="phone" column="phone"/>
+        <result property="wei" column="wei"/>
+        <result property="effective" column="effective"/>
+        <result property="startTime" column="start_time"/>
+        <result property="houseMsg" column="house_msg"/>
+        <result property="houseId" column="house_id"/>
+        <result property="communityId" column="community_id"/>
+        <result property="floorId" column="floor_id"/>
+        <collection property="facilityList"  ofType="Facility">
+            <id property="id" column="fid"/>
+            <result property="name" column="fname"/>
+            <result property="status" column="status"/>
+            <result property="addName" column="add_name"/>
+            <result property="addTime" column="add_time"/>
+            <collection property="checked" select="selectByChecked"
+                        column="{leaseId=id,facilityId=fid}"/>
+        </collection>
+    </resultMap>
+    <resultMap id="lease" type="Lease">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="money" column="money"/>
+        <result property="leaseWay" column="lease_way"/>
+        <result property="houseStatus" column="house_status"/>
+        <result property="direction" column="direction"/>
+        <result property="area" column="area"/>
+        <result property="floor" column="floor"/>
+        <result property="checkTime" column="check_time"/>
+        <result property="houseImg" column="house_img"/>
+        <result property="rentMsg" column="rent_msg"/>
+        <result property="phone" column="phone"/>
+        <result property="wei" column="wei"/>
+        <result property="effective" column="effective"/>
+        <result property="startTime" column="start_time"/>
+        <result property="houseMsg" column="house_msg"/>
+        <result property="houseId" column="house_id"/>
+        <result property="communityId" column="community_id"/>
+        <result property="floorId" column="floor_id"/>
+    </resultMap>
+    <select id="selectBySearch" resultMap="lease">
+        select *
+        from sys_lease
+        <where>
+            <if test="houseStatus!=null and houseStatus!=''">
+                and house_status like concat('%', #{houseStatus}, '%')
+            </if>
+            <if test="houseMsg!=null and houseMsg!=''">
+                and house_msg like concat('%', #{houseMsg}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="selectById" resultMap="lease2">
+        select l.*,
+               f.id  fid,
+               f.name  fname
+        from sys_lease l
+        left join sys_facility f on 1=1
+        where l.id = #{id}
+    </select>
+    <select id="selectByChecked" resultType="boolean">
+        select count(id) from lease_facility where lease_id=#{leaseId}
+                                               and facility_id=#{facilityId}
+    </select>
+</mapper>

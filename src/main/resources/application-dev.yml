@@ -1,0 +1,22 @@
+server:
+  port: 8080
+spring:
+  mvc:
+    view:
+      prefix: .html
+      suffix: classpath:/templates/
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sys_community?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 123456
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.haogu.pojo
+  mapper-locations: classpath:mapper/*.xml
+pagehelper:
+  page-size-zero: true
+logging:
+  level:
+    com.haogu: debug

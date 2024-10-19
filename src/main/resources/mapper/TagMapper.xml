@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.TagMapper">
+    <resultMap id="tag" type="Tag">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    <select id="selectAll" resultMap="tag">
+        select *
+        from sys_tag
+    </select>
+    <select id="selectByPage" resultMap="tag">
+        select *
+        from sys_tag
+        where community_id = #{communityId}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_tag(name,status,community_id)
+        values(#{name},#{status},#{communityId})
+    </insert>
+    <delete id="deleteById">
+        delete from sys_tag
+        where id = #{id}
+    </delete>
+    <delete id="deleteBatch">
+        delete from sys_tag
+        where id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update">
+        update sys_tag
+        <set>
+            <if test="name != null and name!=''">
+                name = #{name},
+            </if>
+            <if test="status != null and status!=''">
+                status = #{status},
+            </if>
+        </set>
+            where id = #{id}
+    </update>
+    <select id="selectByName" resultMap="tag">
+        select *
+        from sys_tag
+        where name like concat('%',#{name},'%')
+    </select>
+</mapper>

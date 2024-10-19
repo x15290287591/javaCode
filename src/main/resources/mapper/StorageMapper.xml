@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.StorageMapper">
+    <resultMap id="storage" type="Storage">
+        <id property="id" column="id"/>
+        <result property="floorName" column="floor_name"/>
+        <result property="unit" column="unit"/>
+        <result property="storageNum" column="storage_num"/>
+        <result property="area" column="area"/>
+        <result property="pooledArea" column="pooled_area"/>
+        <result property="realArea" column="real_area"/>
+        <result property="remark" column="remark"/>
+        <result property="communityId" column="community_id"/>
+        <result property="floorId" column="floor_id"/>
+        <result property="houseId" column="house_id"/>
+    </resultMap>
+    <select id="selectByNum" resultMap="storage">
+        select *
+        from sys_storage
+        where storage_num like concat('%', #{storageNum}, '%')
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_storage
+        values (null,#{floorName}, #{unit}, #{storageNum}, #{area},
+                #{pooledArea}, #{realArea}, #{remark}, #{communityId},
+                #{floorId}, #{houseId})
+    </insert>
+    <delete id="deleteById">
+        delete from sys_storage where id=#{id}
+    </delete>
+    <delete id="deleteBatch">
+        delete from sys_storage where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update">
+        update sys_storage
+        <set>
+            <if test="floorName!=null and floorName!=''">
+                floor_name=#{floorName},
+            </if>
+            <if test="unit!=null and unit!=''">
+                unit=#{unit},
+            </if>
+            <if test="storageNum!=null and storageNum!=''">
+                storage_num=#{storageNum},
+            </if>
+            <if test="area!=null">
+                area=#{area},
+            </if>
+           <if test="pooledArea!=null">
+               pooled_area=#{pooledArea},
+           </if>
+            <if test="realArea!=null">
+                real_area=#{realArea},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark},
+            </if>
+        </set>
+            where id=#{id}
+    </update>
+    <select id="selectAll" resultMap="storage">
+        select *
+        from sys_storage
+    </select>
+    <select id="selectByPage" resultMap="storage">
+        select *
+        from sys_storage
+        limit #{pageNum},#{pageSize}
+    </select>
+</mapper>

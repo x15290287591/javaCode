@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.RegionMapper">
+    <resultMap id="region" type="Region">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="number" column="number"/>
+        <result property="area" column="area"/>
+        <result property="parkingNum" column="parking_num"/>
+        <result property="remark" column="remark"/>
+        <result property="communityId" column="community_id"/>
+    </resultMap>
+    <select id="selectAll" resultMap="region">
+        select *
+        from sys_region r left join sys_community c on r.community_id=c.id
+    </select>
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_region
+        values (null,#{name}, #{number}, #{area}, #{parkingNum}, #{remark}, #{communityId})
+    </insert>
+    <delete id="deleteBatch">
+        delete from sys_region where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update">
+        update sys_region
+        <set>
+            <if test="name != null and name!=''">name=#{name},</if>
+            <if test="number != null and number!=''">number=#{number},</if>
+            <if test="area != null">area=#{area},</if>
+            <if test="parkingNum != null">parking_num=#{parkingNum},</if>
+            <if test="remark != null">remark=#{remark},</if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="selectByName" resultMap="region">
+        select r.*
+        from sys_region
+        <where>
+            <if test="name!=null and name!=''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="number!=null and number!=''">
+                and number like concat('%',#{number},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

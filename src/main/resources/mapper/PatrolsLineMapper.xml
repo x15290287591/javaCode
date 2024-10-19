@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.PatrolsLineMapper">
+    <insert id="insert">
+        insert into patrols_line values
+        <foreach collection="patrolsIds" item="patrolsIds" separator=",">
+            (null,#{lineId},#{patrolsIds})
+        </foreach>
+    </insert>
+    <delete id="deleteById">
+        delete
+        from patrols_line
+        where line_id = #{id}
+    </delete>
+</mapper>

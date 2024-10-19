@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.CommunityMapper">
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_community
+        values (null, #{name}, #{number}, #{region},
+                #{address}, #{completionTime},
+                #{houseUse}, #{area}, #{floorNum},
+                #{houseNum}, #{carNum}, #{parkNum},
+                #{communityImg}, #{remark}, #{bossName},
+                #{bossWei}, #{bossPhone}, #{bossQq}, #{bossEmail}, #{employeeId})
+    </insert>
+    <delete id="deleteById">
+        delete
+        from sys_community
+        where id = #{id}
+    </delete>
+
+    <update id="update">
+        update sys_community
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="number!=null">
+                number=#{number},
+            </if>
+            <if test="region!=null">
+                region=#{region},
+            </if>
+            <if test="address!=null">
+                address=#{address},
+            </if>
+            <if test="completionTime!=null">
+                completion_time=#{completionTime},
+            </if>
+            <if test="houseUse!=null">
+                house_use=#{houseUse},
+            </if>
+            <if test="area!=null">
+                area=#{area},
+            </if>
+            <if test="floorNum!=null">
+                floor_num=#{floorNum},
+            </if>
+            <if test="houseNum!=null">
+                house_num=#{houseNum},
+            </if>
+            <if test="carNum!=null">
+                car_num=#{carNum},
+            </if>
+            <if test="parkNum!=null">
+                park_num=#{parkNum},
+            </if>
+            <if test="communityImg!=null">
+                community_img=#{communityImg},
+            </if>
+            <if test="remark!=null">
+                remark=#{remark},
+            </if>
+            <if test="bossName!=null">
+                boss_name=#{bossName},
+            </if>
+            <if test="bossWei!=null">
+                boss_wei=#{bossWei},
+            </if>
+            <if test="bossPhone!=null">
+                boss_phone=#{bossPhone},
+            </if>
+            <if test="bossQq!=null">
+                boss_qq=#{bossQq},
+            </if>
+            <if test="bossEmail!=null">
+                boss_email=#{bossEmail},
+            </if>
+            <if test="employeeId!=null">
+                employee_id=#{employeeId}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <resultMap id="community" type="Community">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="number" property="number"/>
+        <result column="region" property="region"/>
+        <result column="address" property="address"/>
+        <result column="completion_time" property="completionTime"/>
+        <result column="house_use" property="houseUse"/>
+        <result column="area" property="area"/>
+        <result column="floor_num" property="floorNum"/>
+        <result column="house_num" property="houseNum"/>
+        <result column="car_num" property="carNum"/>
+        <result column="park_num" property="parkNum"/>
+        <result column="community_img" property="communityImg"/>
+        <result column="remark" property="remark"/>
+        <result column="boss_name" property="bossName"/>
+        <result column="boss_wei" property="bossWei"/>
+        <result column="boss_phone" property="bossPhone"/>
+        <result column="boss_qq" property="bossQq"/>
+        <result column="boss_email" property="bossEmail"/>
+        <result column="employee_id" property="employeeId"/>
+    </resultMap>
+    <select id="selectByEmployee" resultMap="community">
+        select name, address, community_img communityImg
+        from sys_community
+    </select>
+    <resultMap id="community2" type="Community">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="number" property="number"/>
+        <result column="region" property="region"/>
+        <result column="address" property="address"/>
+        <result column="completion_time" property="completionTime"/>
+        <result column="house_use" property="houseUse"/>
+        <result column="area" property="area"/>
+        <result column="floor_num" property="floorNum"/>
+        <result column="house_num" property="houseNum"/>
+        <result column="car_num" property="carNum"/>
+        <result column="park_num" property="parkNum"/>
+        <result column="community_img" property="communityImg"/>
+        <result column="remark" property="remark"/>
+        <result column="boss_name" property="bossName"/>
+        <result column="boss_wei" property="bossWei"/>
+        <result column="boss_phone" property="bossPhone"/>
+        <result column="boss_qq" property="bossQq"/>
+        <result column="boss_email" property="bossEmail"/>
+        <result column="employee_id" property="employeeId"/>
+        <collection property="floors" ofType="Floor">
+            <id column="fid" property="id"/>
+            <result column="fname" property="name"/>
+            <result column="completion_time" property="completionTime"/>
+            <result column="house_use" property="houseUse"/>
+            <result column="area" property="area"/>
+            <result column="floor_num" property="floorNum"/>
+            <result column="lift" property="lift"/>
+            <result column="storage" property="storage"/>
+            <result column="remark" property="remark"/>
+            <result column="community_id" property="communityId"/>
+            <collection property="children" ofType="House">
+                <id column="hid" property="id"/>
+                <result column="house_unit" property="unit"/>
+                <result column="house_num" property="roomNum"/>
+                <result column="house_use" property="houseUse"/>
+                <result column="area" property="area"/>
+                <result column="pooled_area" property="pooledArea"/>
+                <result column="real_area" property="realArea"/>
+                <result column="shi" property="shi"/>
+                <result column="ting" property="ting"/>
+                <result column="chu" property="chu"/>
+                <result column="wei" property="wei"/>
+                <result column="park_num" property="parkNum"/>
+                <result column="storage_num" property="storageNum"/>
+                <result column="room_status" property="roomStatus"/>
+                <result column="remark" property="remark"/>
+                <result column="floor_id" property="floorId"/>
+                <result column="community_id" property="communityId"/>
+                <collection property="children" ofType="House">
+                    <id column="h2id" property="id"/>
+                    <result column="house_unit" property="unit"/>
+                    <result column="room_num" property="roomNum"/>
+                    <result column="house_use" property="houseUse"/>
+                    <result column="area" property="area"/>
+                    <result column="pooled_area" property="pooledArea"/>
+                    <result column="real_area" property="realArea"/>
+                    <result column="shi" property="shi"/>
+                    <result column="ting" property="ting"/>
+                    <result column="chu" property="chu"/>
+                    <result column="wei" property="wei"/>
+                    <result column="park_num" property="parkNum"/>
+                    <result column="storage_num" property="storageNum"/>
+                    <result column="room_status" property="roomStatus"/>
+                    <result column="remark" property="remark"/>
+                    <result column="floor_id" property="floorId"/>
+                    <result column="community_id" property="communityId"/>
+                </collection>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="selectByTree" resultMap="community2">
+        select c.id,
+               c.name,
+               f.id        fid,
+               f.name      fname,
+               h1.id       hid,
+               h1.unit     house_unit,
+               h1.room_num ,
+               h2.id       h2id,
+               h2.unit     house_unit,
+               h2.room_num
+        from sys_community c
+                 left join sys_floor f on c.id = f.community_id
+                 left join sys_house h1 on  h1.community_id = f.community_id
+                 left join sys_house h2 on  h1.unit = h2.unit and h1.community_id = h2.community_id
+        where c.id = #{id}
+    </select>
+
+</mapper>

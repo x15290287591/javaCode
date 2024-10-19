@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haogu.mapper.EmployeeMapper">
+    <resultMap id="employee2" type="com.haogu.pojo.Employee">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="avatar" property="avatar"/>
+        <result column="password" property="password"/>
+        <result column="wei" property="wei"/>
+        <result column="qq" property="qq"/>
+        <result column="email" property="email"/>
+        <result column="introduce" property="introduce"/>
+        <collection property="roles" ofType="com.haogu.pojo.Role">
+            <id column="rid" property="id"/>
+            <result column="rname" property="name"/>
+            <collection property="check" select="selectByCheck"
+                        column="{employeeId=id, roleId=rid}"/>
+        </collection>
+        <collection property="communities" ofType="com.haogu.pojo.Community">
+            <id column="cid" property="id"/>
+            <result column="cname" property="name"/>
+            <collection property="check" select="selectByCommunity"
+                        column="{employeeId=id,communityId=cid}"/>
+        </collection>
+    </resultMap>
+    <resultMap id="employee" type="com.haogu.pojo.Employee">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="avatar" property="avatar"/>
+        <result column="password" property="password"/>
+        <result column="wei" property="wei"/>
+        <result column="qq" property="qq"/>
+        <result column="email" property="email"/>
+        <result column="introduce" property="introduce"/>
+    </resultMap>
+    <select id="selectAll" resultMap="employee">
+        select e.*,
+               r.id   rid,
+               r.name rname,
+               c.id   cid,
+               c.name cname
+        from sys_employee e
+                 left join employee_role er on e.id = er.employee_id
+                 left join sys_role r on er.role_id = r.id
+                 left join employee_community ec on e.id = ec.employee_id
+                 left join sys_community c on ec.community_id = c.id
+    </select>
+    <delete id="deleteById">
+        delete
+        from sys_employee
+        where id = #{id}
+    </delete>
+    <update id="update">
+        update sys_employee
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="avatar!=null and avatar!=''">
+                avatar=#{avatar},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="wei!=null and wei!=''">
+                wei=#{wei},
+            </if>
+            <if test="qq!=null and qq!=''">
+                qq=#{qq},
+            </if>
+            <if test="email!=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="introduce!=null and introduce!=''">
+                introduce=#{introduce},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_employee
+        values (null, #{name}, #{phone}, #{avatar}, #{password}, #{wei},
+                #{qq}, #{email}, #{introduce})
+    </insert>
+    <delete id="deleteBatch">
+        delete from sys_employee where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="selectByName" resultMap="employee">
+        select e.*,
+               r.id   rid,
+               r.name rname
+        from sys_employee e
+                 left join employee_role er on e.id = er.employee_id
+                 left join sys_role r on er.role_id = r.id
+        where e.name like concat('%', #{name}, '%')
+    </select>
+    <select id="selectByPage" resultMap="employee">
+        select e.*,
+               r.id   rid,
+               r.name rname
+        from sys_employee e
+                 left join employee_role er on e.id = er.employee_id
+                 left join sys_role r on er.role_id = r.id
+        where e.id in (select *
+                       from (
+                                select id
+                                from sys_employee
+                                ORDER BY id limit #{pageNum}, #{pageSize}
+                            ) as abc)
+    </select>
+    <select id="selectById" resultMap="employee2">
+        select e.*,
+               r.id   rid,
+               r.name rname,
+               c.id   cid,
+               c.name cname
+        from sys_employee e
+                 left join sys_role r on 1 = 1
+                 left join sys_community c on 1=1
+        where e.id = #{id}
+    </select>
+    <select id="selectByCheck" resultType="boolean">
+        select count(id)
+        from employee_role
+        where employee_id = #{employeeId}
+          and role_id = #{roleId}
+    </select>
+    <select id="selectByCommunity" resultType="boolean">
+        select count(id)
+        from employee_community
+        where employee_id = #{employeeId}
+          and community_id = #{communityId}
+    </select>
+</mapper>
